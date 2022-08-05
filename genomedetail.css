@@ -40,6 +40,20 @@
         width: 16px;
         height: 16px;
       }
+
+      .domainTable-td-colorbox{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        display: flex !important;
+        flex-direction: row;
+      }
+      .domainTable-td{
+        align-items: center;
+        /* display: flex;
+        justify-content: center; */
+      }
+
       .flex-it {
         display: flex !important;
         flex-direction: row;

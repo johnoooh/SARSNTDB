@@ -154,7 +154,7 @@ error_reporting(E_ALL);
         } 
     }
 
-    $sql2 = "SELECT g.Protein, m.coordinate, g.Start, g.End, SUM(m.mutcount) as frequency 
+    $sql2 = "SELECT g.Protein, m.coordinate, g.Start, g.End, SUM(m.mutcount) as frequency
               FROM mutations m
               left outer join Gene_1 g on m.coordinate between g.Start and g.End
              where 1=1 $q1
@@ -452,6 +452,10 @@ error_reporting(E_ALL);
     $counter = 0;
     // $numOfSections = 30;
     $interval = floor( (intval($xAxisGraphEnd) - intval($xAxisGraphStart))/ $numOfSections ) ;
+    $interval=$gap;
+    if ($interval ==0){
+      $interval=1;
+    }
     $xAxisLabel = '';
     $barStart = $xAxisGraphStart-1;
     $barEnd = 0;
@@ -471,7 +475,7 @@ error_reporting(E_ALL);
         $barEnd = ($barStart + $interval) > $xAxisGraphEnd ? $xAxisGraphEnd : ($barStart + $interval)-1;
 
       }
-      
+      // echo $interval;
       // echo $barStart;
       // echo "-";
       // echo $barEnd;
@@ -479,6 +483,8 @@ error_reporting(E_ALL);
       foreach($result2_rows as $row) 
       { 
         if ($interval ==1){
+          // $barStart+=1;
+          // $barEnd = $barStart;
           if(intval($row['coordinate']) == $barStart) 
         { 
           $tmpObj->subSectionTotal += intval($row['frequency']);
@@ -490,7 +496,9 @@ error_reporting(E_ALL);
           $tmpObj->subSectionTotal += intval($row['frequency']);
         }
         }
+        // $proteinSelected= $row['Protein'];
       }
+      
       $tmpObj->subSectionLabel = strval($barStart).'-'.strval($barEnd);
       array_push($A, array("label" => $tmpObj->subSectionLabel, "y" => $tmpObj->subSectionTotal)); 
     }
@@ -631,6 +639,7 @@ error_reporting(E_ALL);
     $obj->mutationsShapeScoreGSE153984[] = array(      
       "Total" => $BGSE153984
     );
+    // $obj ->proteinSelectedInfo = $proteinSelected;
     
 
     echo json_encode($obj);

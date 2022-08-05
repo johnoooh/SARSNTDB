@@ -57,10 +57,11 @@
     g.matchedcols,
     pi.Picture,
     d.gene,
-    -- trim(d.Feature) Feature,
+    trim(d.Feature) Feature,
     d.domainNameCov2,
     d.cov2Start Feature_Start,
-    d.cov2End Feature_End
+    d.cov2End Feature_End,
+    d.cov2AAStartEnd 
     FROM
         cov_comp d
         

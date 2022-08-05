@@ -6,7 +6,9 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="./canvasjs-non-commercial-3.6.6/canvasjs.min.js"></script>
+    <script src="./sortable.js"></script>
+
     <?php include "./Navigation.php";?>
     <style>
         .btn 
@@ -121,7 +123,11 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          
+        }
+        .cite {
+          display: flex;
+          align-items: right;
+          justify-content: right;
         }
     </style>
   
@@ -194,12 +200,12 @@
           </div>
           <div class="col-md-2">
               <button type="submit" class="btn btn-success" id="submit_btn" name="submit">Submit</button>
-              <button type="button" onclick="resetForm();" id="clear_btn" class="btn btn-secondary">Clear</button>
+              <button type="button" onclick="resetFormMut();" id="clear_btn" class="btn btn-secondary">Clear</button>
           </div>
           <div class="col-md-2">
             <label for="Region">Region</label>
             <select class = "form-control" id="Region" >
-                <option value= "">All</option>
+                <option value= "All">All</option>
                 <option value="Nsp1">Nsp1</option>
                 <option value="Nsp2">Nsp2</option>
                 <option value="Nsp3">Nsp3</option>
@@ -210,7 +216,7 @@
                 <option value="Nsp8">Nsp8</option>
                 <option value="Nsp9">Nsp9</option>
                 <option value="Nsp10">Nsp10</option>
-                <option value="Nsp11">Nsp11</option>
+                <!-- <option value="Nsp11">Nsp11</option> -->
                 <option value="Nsp12">Nsp12</option>
                 <option value="Nsp13">Nsp13</option>
                 <option value="Nsp14">Nsp14</option>
@@ -220,11 +226,11 @@
                 <option value="ORF3a Protein">ORF3a</option>
                 <option value="Envelope Membrane Protein">E Gene</option>
                 <option value="Membrane Protein">M Gene</option>
-                <option value="ORF6a Protein">ORF6a</option>
+                <option value="ORF6 Protein">ORF6</option>
                 <option value="ORF7a Protein">ORF7a</option>
-                <option value="ORF7b Protein">ORF7b</option>
+                <!-- <option value="ORF7b Protein">ORF7b</option> -->
                 <option value="ORF8 Protein">ORF8</option>
-                <option value="ORF9 protein">ORF9</option>
+                <option value="ORF9 protein">ORF9b</option>
                 <option value="Nucleocapsid proteins">N Gene</option>
                 <option value="ORF10 Protein">ORF10</option>
             </select>
@@ -237,49 +243,86 @@
     </div>
     <i id="emptyText">Apply filters and hit submit to start seeing results.</i>
     <div id="mutationsData" style="display:none;"> 
+
+
       <div class="tab">
         <button class="tablinks active" id="summaryTab" onclick="activateMutationsResultTab('summaryTab', 'mutationsSummary')">Summary</button>
         <button class="tablinks" id="detailTab" onclick="activateMutationsResultTab('detailTab', 'mutationsDetail')">Detail</button>
       </div>
-      <div id="mutationsSummary" class="datacontainer">
-        <div id="datagrid" class="datagrid">        
-        </div>
-        <div id="mutationsChart" class="datagraph"></div>    
-      </div>
-      </br></br>
-      <div id="mutationsSummaryFrequency" class="datacontainer">        
-        <div id="mutationsByFreqChart" class="datagraph"></div>    
-      </div>
-      </br></br>
-      <div class="legenddiv">
-      <table style="padding-left:10px ;">
-        <tr class="darkheader" style="padding-left:10px ;"><th>Legend</th><th></th></tr>
 
-        <tr>
-          <td class="comp-table-row-td"><div class="color-palette" style="background-color:red"></div></td>
-          <td class="comp-table-row-td">  >.5</td>
-        </tr>
-        <tr>
-          <td class="comp-table-row-td"><div class="color-palette" style="background-color:blue"></div></td>
-          <td class="comp-table-row-td">  <.5</td>
-        </tr>
-        </table>    
-      </div>   
-      <div id="mutationsShapeScore" class="datacontainer"> 
+      <div id="mutSummary" >
+        <div id="mutationsSummary" class="datacontainer">
+          <div id="datagrid" class="datagrid">        
+          </div>
+          <div id="mutationsChart" class="datagraph"></div>    
+        </div>
         
-        <div id="mutationsShapeScoreChart" class="datagraph"></div>   
-         
+        <div id="mutationsSummaryFrequency" class="datacontainer">  
+        </br></br>      
+          <div id="mutationsByFreqChart" class="datagraph"></div>    
+        </div>
+        </br></br>
+        <div class="datacontainer"> 
+          <div class="legenddiv">
+            <table style="padding-left:10px ;" >
+              <tr class="darkheader" style="padding-left:10px ;"><th></th><th>Secondary Structure Legend</th></tr>
+
+              <tr>
+                <td class="comp-table-row-td"><div class="color-palette" style="background-color:red"></div></td>
+                <td class="comp-table-row-td">  < 0.5 More likely to be double stranded </td>
+              </tr>
+              <tr>
+                <td class="comp-table-row-td"><div class="color-palette" style="background-color:blue"></div></td>
+                <td class="comp-table-row-td">  > 0.5 Less likely to be double stranded</td>
+              </tr>
+            </table>    
+          </div> 
+          </div>   
+    
+        <div id="mutationsShapeScoreIncarnato" class="datacontainer"> 
+          
+          <div id="mutationsShapeScoreChart" class="datagraph"></div>   
+        </div>
+
+        </br>
+        <h4 class= "cite" id="citeIncarnato" >Data from &nbsp <a href="http://www.incarnatolab.com/datasets/SARS_Manfredonia_2020.php" > Manfredonia at al. 2020</a> </h4>
+
+        <div id="mutationsShapeScoreWT" class="datacontainer"> 
+          <div id="mutationsShapeScoreChartWT" class="datagraph"></div>   
+        </div>
+
+        <div id="mutationsShapeScoreDELTA" class="datacontainer"> 
+
+          <div id="mutationsShapeScoreChartDELTA" class="datagraph"></div>  
+        </div>
+
+        </br>
+        <h4 class= "cite" id="citeYang" >The two datasets above are from &nbsp<a href="https://www.nature.com/articles/s41467-021-25357-1" > Yang at al. 2021</a> </h4>
+
+        <div id="mutationsShapeScoreGSE153984" class="datacontainer"> 
+
+          <div id="mutationsShapeScoreChartGSE153984" class="datagraph"></div> 
+        </div>
+
+        </br>
+        <h4 class= "cite" id="citeGSE153984" >Data from  &nbsp<a href="https://www.cell.com/cell/fulltext/S0092-8674(21)00158-6" > Sun at al. 2020</a> </h4>
+
+        
       </div>
-      <div id="mutationsShapeScoreChartWT" class="datagraph"></div>   
-      <div id="mutationsShapeScoreChartDELTA" class="datagraph"></div>  
-      <div id="mutationsShapeScoreChartGSE153984" class="datagraph"></div> 
       <div id="mutationsDetail" class="datacontainer" style="display:none;"> 
-        <i>Detail view of the mutations.</i>
+          <i>Detail view of the mutations.</i>
       </div>
     </div>  
 	</div>
 
   <script>
+
+    function resetFormMut(){
+      document.getElementById("Start").value="1";
+      document.getElementById("End").value="29903";  
+      document.getElementById("Region").value= "All";
+      
+    }
     window.onload = function() { 
 
       
@@ -368,7 +411,7 @@
               for (var i = 0; i < e.entries.length; i++) {
                 content += "Start - End: " + "<strong>" + e.entries[i].dataPoint.label + "</strong>";
                 content += "<br/>";
-                content += "Total: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";
+                content += "Average: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";
                 
               }
               return content;
@@ -418,7 +461,7 @@
               for (var i = 0; i < e.entries.length; i++) {
                 content += "Start - End: " + "<strong>" + e.entries[i].dataPoint.label + "</strong>";
                 content += "<br/>";
-                content += "Total: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";                
+                content += "Average: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";                
               }
               return content;
             }
@@ -467,7 +510,7 @@
               for (var i = 0; i < e.entries.length; i++) {
                 content += "Start - End: " + "<strong>" + e.entries[i].dataPoint.label + "</strong>";
                 content += "<br/>";
-                content += "Total: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";                
+                content += "Average: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";                
               }
               return content;
             }
@@ -517,7 +560,7 @@
               for (var i = 0; i < e.entries.length; i++) {
                 content += "Start - End: " + "<strong>" + e.entries[i].dataPoint.label + "</strong>";
                 content += "<br/>";
-                content += "Total: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";                
+                content += "Average: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";                
               }
               return content;
             }
@@ -565,7 +608,7 @@
               for (var i = 0; i < e.entries.length; i++) {
                 content += "Start - End: " + "<strong>" + e.entries[i].dataPoint.label + "</strong>";
                 content += "<br/>";
-                content += "Total: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";                
+                content += "Average: " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";                
               }
               return content;
             }
@@ -577,29 +620,32 @@
         submitButton.addEventListener("click", submitGetMutationData);
         
         var clearButton = document.getElementById("clear_btn");
-        clearButton.addEventListener("click", resetForm);
+        clearButton.addEventListener("click", resetFormMut);
 
         var regionDropDown = document.getElementById("Region");
         regionDropDown.addEventListener("change", getMutationsData);
 
         getMutationsData();
-        function resetForm(){
-          document.getElementById("Start").value=1;
-          document.getElementById("End").value=29903;  
+        function resetFormMut(){
+          document.getElementById("Start").value="1";
+          document.getElementById("End").value="29903";  
+          document.getElementById("Region").value= "All";
+          console.log("reset");
+          getMutationsData();
         }
 
         function submitGetMutationData() {
           localStorage.clear();
           
           document.getElementById("emptyText").style.display = "none";
-          document.getElementById("mutationsData").style.display = "block";    
+          // document.getElementById("mutationsData").style.display = "block";    
 
           var region = document.getElementById("Region").value;
           var start = document.getElementById("Start").value;
           var end = document.getElementById("End").value;
           
           if( start!= "" || end != ""){
-            document.getElementById("Region").value = "";
+            document.getElementById("Region").value = "All";
             // console.log(region)
             // region = "";
           }
@@ -617,10 +663,12 @@
           var end = document.getElementById("End").value;
           // console.log(start,end);
           // console.log(region != "",region)
-          if( region != "" ) {
+          if( region != "All" ) {
             start = "";
             end = "";
-            resetForm();
+            document.getElementById("Start").value="1";
+            document.getElementById("End").value="29903"; 
+            // resetFormMut();
           }
           // if( start!= "" || end != ""){
           //   // document.getElementById("Region").value = "";
@@ -759,12 +807,7 @@
               for (i = 0; i < res.mutationsShapeScoreGSE153984.length; i++) { 
                   mutationsShapeScoreDataGSE153984.splice(0,mutationsShapeScoreDataGSE153984.length);
 
-                  // if (res.mutationsShapeScore[i].Total> 0.5){
-                  //   var colorData = "blue";
-                  // }else{
-                  //   var colorData = "red"
-                  // }
-                  // console.log( res.mutationsShapeScoreGSE153984[i].Total);
+                
                   mutationsShapeScoreDataGSE153984.push({
                       type: "column",
                       dataPoints: res.mutationsShapeScoreGSE153984[i].Total,
@@ -775,6 +818,9 @@
                   mutationsShapeScoreChartGSE153984.render();
               }
             }
+          }
+          if (region=="All"){
+            region="";
           }
           //xmlhttp.open("GET", "MutationsSummary.php?Region="+region+"&ReferenceBase="+referenceBase+"&AlternateBase="+alternateBase+"&Instrument="+instrument+"&Start="+start+"&End="+end, true);
           xmlhttp.open("GET", "MutationsSummary.php?Region="+region+"&Start="+start+"&End="+end, true);
@@ -814,20 +860,44 @@
       function activateMutationsResultTab(tabId, mutationTabId) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("datacontainer");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
+        tabcontentcite = document.getElementsByClassName("cite");
+        mutDetail = document.getElementById("mutationsDetail");
+        // for (i = 0; i < tabcontent.length; i++) {
+        //   tabcontent[i].style.display = "none";
+        //   try{
+        //     tabcontentcite[i].style.display = "none";
+        //   }catch (error){
+
+        //   }
+
+        // }
+        document.getElementById("mutSummary").style.display= "none"
+
+         
         tablinks = document.getElementsByClassName("tablinks");
         for (i = 0; i < tablinks.length; i++) {
           tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
         document.getElementById(mutationTabId).style.display = "flex";
         document.getElementById(tabId).className += " active";
+        // document.querySelectorAll("br").style.display="none";
 
         if(tabId == 'summaryTab') {
-          document.getElementById('mutationsSummaryFrequency').style.display = "flex";
-          document.getElementById('mutationsShapeScore').style.display = 'flex';
+          document.getElementById("mutSummary").style.display= "inline"
+          mutDetail.style.display= "none"
+          // document.getElementById('mutationsSummaryFrequency').style.display = "flex";
+          // document.getElementById('mutationsShapeScoreIncarnato').style.display = "flex";
+          // document.getElementById('citeIncarnato').style.display = "flex";
+          // document.getElementById('mutationsShapeScoreDELTA').style.display = 'flex';
+          // document.getElementById('mutationsShapeScoreWT').style.display = "flex";
+          // document.getElementById('citeYang').style.display = "flex";
           
+          // document.getElementById('mutationsShapeScoreGSE153984').style.display = "flex";
+          // document.getElementById('citeGSE153984').style.display = "flex";
+
+          
+        }else{
+          mutDetail.style.display= "inline"
         }
       }
 

@@ -71,7 +71,7 @@ error_reporting(E_ALL);
             display: inline-block;
         }
         .datagraph {
-            height: 500px;
+        
             padding: 15px;
         }
         tr.darkheader th{
@@ -154,6 +154,17 @@ error_reporting(E_ALL);
             border-right: 1px solid #cecece;    
             
         }
+        .color-palette {
+        margin-left: 5px; 
+        border: 1px solid grey;
+        width: 16px;
+        height: 16px;
+        }
+        #legendRow {
+          max-width: 900px;
+          
+
+        }
 
     </style>
   </head>
@@ -203,7 +214,7 @@ error_reporting(E_ALL);
  ?>
 
 <body>
-    <div class="datagrid">
+    <div class="datagraph" >
         <h4 class="search-header">Intragenome Interaction Regions</h4> 
         
         <div id="coords">
@@ -223,18 +234,23 @@ error_reporting(E_ALL);
         </div>
         
         <div id="container"></div>
-
+        <div id="legendRow" ></div>
         <script src="./JS/main.js"></script>
         <script>
-            var lStart = "<?php echo $lStart; ?>";
-            var rStart = "<?php echo $rStart; ?>";
-            var lEnd = "<?php echo $lEnd; ?>";
-            var rEnd = "<?php echo $rEnd; ?>";
+            var lStart = <?php echo $lStart; ?>;
+            var rStart = <?php echo $rStart; ?>;
+            var lEnd = <?php echo $lEnd; ?>;
+            var rEnd = <?php echo $rEnd; ?>;
             var LRarray = Array(lStart,rEnd,rStart,rEnd);
             // console.log(LRarray);
             
             plotrepeats(LRarray);
+            createLegend();
         </script>
+
+    </div>
+    <div class="datagrid">
+
         <table class='table'>
 
 

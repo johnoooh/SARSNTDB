@@ -133,7 +133,7 @@ error_reporting(E_ALL);
     $result_rows = $result->fetch_all(MYSQLI_ASSOC);
     $total = $result->num_rows;
 
-    $sqldom = "SELECT gene, feature, domainNameCov2, cov2Start, cov2End FROM cov_comp WHERE 1=1 $q2 ORDER BY cov_comp.cov2Start + 0";
+    $sqldom = "SELECT gene, feature, domainNameCov2, cov2Start, cov2End, cov2AAStartEnd FROM cov_comp WHERE 1=1 $q2 ORDER BY cov_comp.cov2Start + 0";
     $resultDom = $con->query($sqldom);
     if (!$resultDom) {
       echo $sqldom;
@@ -214,7 +214,13 @@ error_reporting(E_ALL);
                 //   $prev_color=$color1;
                 // }
                 $data.= "<tr style=".$color2.">" ;
-                $data ='<td><a onclick="getGeneDetails(\''.$row['Gene'].'\',\''.$row['Protein'].'\')">View Detail</a></td>';
+
+                if ($row['Gene']=="ORF10" || $row['Gene']== "ORF7b" || $row['Protein']=="Nsp11" ||$row['Protein']== "Nsp16"){
+                  $data ='<td>Details not available currently</td>';
+                }else{
+                  $data ='<td><a onclick="getGeneDetails(\''.$row['Gene'].'\',\''.$row['Protein'].'\')">View Detail</a></td>';
+                }
+                // $data ='<td><a onclick="getGeneDetails(\''.$row['Gene'].'\',\''.$row['Protein'].'\')">View Detail</a></td>';
                 $data.='<td>'.$row['Gene'].'</td>';
 
                 $data.='<td>'.$row['Protein'].'</td>';
@@ -406,7 +412,7 @@ error_reporting(E_ALL);
                       
                       // $data.= "<tr style=".$color1.">" ;
                       if ($protSelected==true){
-                        $linkRowIntra='<td> <a href=visualIntragenome.php?start='.$protst.'&end='.$proted.'&lStart='.$row['leftStart'].'&lEnd='.$row['leftEnd'].'&rStart='.$row['rightStart'].'&rEnd='.$row['rightEnd'].'"> Visualize </a></td>';
+                        $linkRowIntra='<td> <a href="visualIntragenome.php?start='.$protst.'&end='.$proted.'&lStart='.$row['leftStart'].'&lEnd='.$row['leftEnd'].'&rStart='.$row['rightStart'].'&rEnd='.$row['rightEnd'].'"> Visualize </a></td>';
                       }else if($start != "" and $end == "") {
                         $linkRowIntra = '<td> <a href="visualIntragenome.php?start='.$start.'&lStart='.$row['leftStart'].'&lEnd='.$row['leftEnd'].'&rStart='.$row['rightStart'].'&rEnd='.$row['rightEnd'].'"> Visualize </a></td>';
                       }

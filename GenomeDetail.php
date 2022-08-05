@@ -79,8 +79,14 @@ error_reporting(E_ALL);
 
             if ($counter == 0) {
               
+              if($row['Gene']== "ORF9b"){
+                $hreflink = "<a href=https://www.rcsb.org/structure/7F2B> Rutgers PDB</a></h5>";
               
-              $predata.='<h5> Protein Simulations from <a href=https://doi.org/10.1016/j.crmeth.2021.100014> Zhang Group</a></h5>';
+              }else{
+                $hreflink  = "<a href=https://doi.org/10.1016/j.crmeth.2021.100014> Zhang Group</a></h5>";
+              }
+
+              $predata.='<h5> Protein Simulations from '.$hreflink;
               $predata.='<div class="flex-row">';
               
               $predata.=' <div id="protein-image-div">';
@@ -112,8 +118,9 @@ error_reporting(E_ALL);
               $predata.='   <input type="checkbox" id="toggleGenomeCanvas" name="toggleGenomeCanvas" value="0">';
               $predata.='   &nbsp;<label for="toggleGenomeCanvas">Show other proteins</label>';
               $predata.='</div>';
-
+              $predata.='       <h4>Functional Domain Map</h4>';
               $predata.='      <div class="flex-row">';
+              
               $predata.='        <div class="genome-div"><canvas id="genomeCanvas" class="genomeCanvas"></canvas></div>';
               $predata.='        <div id="tooltip-div">
                                     <div id="canvasDomainTooltip" class="canvasDomainTooltipHidden">Content 1</div>
@@ -136,7 +143,9 @@ error_reporting(E_ALL);
               //$functiondata.='<div class="row"><table>';
               $domst = $row["Feature_Start"];
               $domed = $row["Feature_End"];
-              array_push($featureArray, array("feature" => $row["domainNameCov2"], "st" => $domst, "end" => $domed, "color" => $colorPaletteId));
+              $domProtst = ($row["Start"]+$row["Feature_Start"])/3;
+              $domProted = ($row["End"]+$row["Feature_End"])/3;
+              array_push($featureArray, array("feature" => $row["domainNameCov2"], "st" => $domst, "end" => $domed, "color" => $colorPaletteId,"AArange" => $row["cov2AAStartEnd"]));
               // $functiondata.='   <tr><td class="col-md-12"><b>'.$row['Feature'].'</b></td></tr>';
               // $functiondata.='   <tr><td class="col-md-12"><div><table class="table table-bordered">';
               // $functiondata.='      <tr>';
@@ -150,7 +159,7 @@ error_reporting(E_ALL);
             } else {
               $domst = $row["Feature_Start"];
               $domed = $row["Feature_End"];
-              array_push($featureArray, array("feature" => $row["domainNameCov2"], "st" => $domst, "end" => $domed,"color" => $colorPaletteId));
+              array_push($featureArray, array("feature" => $row["domainNameCov2"], "st" => $domst, "end" => $domed,"color" => $colorPaletteId,"AArange" => $row["cov2AAStartEnd"]));
               
             }                        
             
@@ -211,18 +220,33 @@ error_reporting(E_ALL);
           }
           $columns = array_column($featureArray, 'st');
           array_multisort($columns, SORT_ASC, $featureArray);
-          $functiondata.='   <tr><td class="col-md-12"><b>Domain</b></td></tr>';
+
+          $functiondata.='   <tr><td class="col-md-12"><b>Domains</b></td></tr>';
           $functiondata.='   <tr><td class="col-md-12"><div><table class="table table-bordered">';
+          $functiondata.='    <tr > ';
+          $functiondata.= '     <td class= "comp-table-header-td">  <h5>Name</h5>  </td>' ;
+
+          $functiondata.= '     <td class="col-md-5 flex-it domainTable-td-colorbox"> <h5>Nucleotide range</h5></td>' ;
+          $functiondata.= '      <td class= "comp-table-header-td"><h5>Residue Range</h5></td>' ;
+          $functiondata.= '    </tr>';
           foreach($featureArray as $feat){
             $functiondata.='      <tr>';
-            $functiondata.='        <td class="col-md-5"><i>'.$feat['feature'].'</i></td>';
-            $functiondata.='        <td class="col-md-5 flex-it">';
+            $functiondata.='        <td ><i>'.$feat['feature'].'</i></td>';
+
+            $functiondata.='        <td class="col-md-5 flex-it domainTable-td-colorbox">';
             $functiondata.='            <i>'.$feat['st'].' - '.$feat['end'].'</i>';
             $functiondata.='            <span id="'.$feat['color'].'"class="color-palette" style="background-color:#ffffff"></span>';
             $functiondata.='        </td>';
+            $functiondata.='        <td class="domainTable-td" >';
+            $functiondata.='            '.$feat["AArange"].'';
+            $functiondata.='        </td>';
+
+            // $domainAAStart = row[]
+
             $functiondata.='      </tr>';
+            
           }
-          
+          $functiondata.='      </tr>';
           echo $predata . $functiondata . $postdata;
         ?>
 

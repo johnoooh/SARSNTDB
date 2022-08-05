@@ -10,6 +10,8 @@
     }
 
     $q1 = "";
+
+    // Normalizes protein input to gene
     if($protein != "") {
       if (strpos($protein,"ORF") !== false and strpos($protein,"Protein") !==false ){
         
@@ -41,12 +43,17 @@
     //               inner join Sequence s on cov_comp.gene = s.Protein
     //             where 1=1 $q1";
 
-    $sql = "  SELECT * FROM cov_comp
-                where 1=1 $q1";
+    $sql = "  SELECT * FROM cov_comp 
+                where 1=1 $q1 ORDER BY cov2Start+1";
 
-    // echo $sql;
     $result = $con->query($sql);
-    
+    if (!$result) {
+      echo ("query error");
+      echo $sql;
+      exit();
+    }
+
+
     //new******
     $sql = "  SELECT * FROM compseq ";
 

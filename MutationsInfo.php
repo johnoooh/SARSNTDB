@@ -8,6 +8,7 @@ class MutationsInfo
     public $mutationsShapeScoreWT = array();
     public $mutationsShapeScoreDELTA = array();
     public $mutationsShapeScoreGSE153984 = array();
+    // public $proteinSelectedInfo = "";
     
 
 }

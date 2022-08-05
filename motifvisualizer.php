@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="./canvasjs-non-commercial-3.6.6/canvasjs.min.js"></script>
     <?php include "Navigation.php";?>
     <link rel="stylesheet" href="./styles.css" />
     <style>
@@ -108,6 +108,7 @@
         .comp-table-header {
         background-color: #aeb6bf;
         color: white;
+        text-align: center;
         }
         .comp-table-header-td {
           padding: 10px;
@@ -136,7 +137,7 @@
         }
         #legendRow {
           max-width: 900px;
-          overflow-x: scroll;
+          
 
         }
     </style>
@@ -147,10 +148,11 @@
     if(isset($_GET['repeat'])){
       //print_r($_POST['proteinData']);
       $repeatData = $_GET['repeat'];
-      $repeatExternal = true;
+      $repeatExternal = 1;
     }else{
       $repeatData = "ACGAAC";
-      $repeatExternal = false;
+      $repeatExternal = 0;
+      $repeatExternaltst = "<h1>".$repeatExternal."</h1>";
     }
 
   ?>
@@ -199,68 +201,33 @@
   </div>
   </div>
   <script>
-    createLegend();
-
-    // function containsAny(str, substrings) {
-    //     for (var i = 0; i != substrings.length; i++) {
-    //       var substring = substrings[i];
-    //       if (str.indexOf(substring) != - 1) {
-    //         return true;
-    //       }
-    //     }
-    //     return false; 
-    // }
     function containsAny(str) {
-      console.log("test");
-        for (var i = 0; i < str.length; i++) {
-          var substring = str[i];
-          if (['A', 'C', 'G','T'].includes(substring)) {
-            console.log("test");
-            continue;
-          }else{
-            return false;
-          }
-        } 
-        return true; 
-    }
-    const nonNTalphabet = ["B","D","E","F","H","I","J","K","L","M","N","O","P","Q","R","S","U","V","W","X","Y","Z",""];
-    function getRepeatData() {
-      
 
-      // resetForm()
-      
-      // container.innerHTML = '';
-      var repeat = document.getElementById("motif").value;
-      
-      if (repeat.length<6){
-        alert("Please input a nucleotide sequence 6 nucleotides in length or greater or search for a repeat in an interval on the Genome Search page.  ")
-
-      }else if (containsAny(repeat)==false){
-        alert("Please input a valid nucleotide sequence using A,G,C, or T only.")
-    
-
-      }else{
-      // console.log(repeat);
-      var xmlhttp = new XMLHttpRequest();
-      xmlhttp.onreadystatechange = function() {
-          if (this.readyState == 4 && this.status == 200) {   
-          // console.log(this.responseText);
-          // console.log(this);
-
-          // var parsedData = JSON.parse(this.responseText);
-          // console.log(this.responseText);
-          // console.log(typeof(this.responseText));
-          makeHTMLtable(this.responseText);
-          
-
-          }
+      for (var i = 0; i < str.length; i++) {
+        var substring = str[i];
+        if (['A', 'C', 'G','T','a','c','g','t'].includes(substring)) {
+          continue;
+        }else{
+          return false;
+        }
+      } 
+      return true; 
       }
-      xmlhttp.open("GET", "repeatData.php?repeat="+repeat, true);
-      xmlhttp.send();
-    }
-  }
-      
-    function makeTable(coordarray,substrarray) {
+      const nonNTalphabet = ["B","D","E","F","H","I","J","K","L","M","N","O","P","Q","R","S","U","V","W","X","Y","Z",""];
+
+    function resetForm(){
+      // console.log("clicked");
+      container.innerHTML = '';
+      var highlights = document.getElementsByClassName("highlight");
+      var parentNode = document.getElementById("repeatDisplay");
+      while(highlights.length>0){
+        parentNode.removeChild(highlights[0])
+        // highlights[0]
+      }
+      }
+
+     
+      function makeTable(coordarray,substrarray) {
       var repeat = document.getElementById("motif").value;
 
       // console.log(coordarray);
@@ -398,19 +365,58 @@
       getRepeatData();
     }
 
-    function resetForm(){
-      // console.log("clicked");
-      container.innerHTML = '';
-      var highlights = document.getElementsByClassName("highlight");
-      var parentNode = document.getElementById("repeatDisplay");
-      while(highlights.length>0){
-        parentNode.removeChild(highlights[0])
-        // highlights[0]
-      }
-      }
-
     
+    function getRepeatData() {
       
+
+      resetForm()
+      
+      // container.innerHTML = '';
+      var repeat = document.getElementById("motif").value;
+      
+      if (repeat.length<6){
+        alert("Please input a nucleotide sequence 6 nucleotides in length or greater or search for a repeat in an interval on the Genome Search page.  ")
+
+      }else if (containsAny(repeat)==false){
+        alert("Please input a valid nucleotide sequence using A,G,C, or T only.")
+    
+
+      }else{
+      // console.log(repeat);
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {   
+          // console.log(this.responseText);
+          // console.log(this);
+
+          // var parsedData = JSON.parse(this.responseText);
+          // console.log(this.responseText);
+          // console.log(typeof(this.responseText));
+          makeHTMLtable(this.responseText);
+          
+
+          }
+      }
+      xmlhttp.open("GET", "repeatData.php?repeat="+repeat, true);
+      xmlhttp.send();
+    }
+  }
+
+    window.onload = function() {
+      if (<?php echo $repeatExternal; ?>  == 1){
+        console.log("test");
+        getRepeatData();
+      }else{
+        console.log("test");
+        getRepeatData();
+      } 
+
+    createLegend();
+
+    }
+    
+    
+  
     
 
   </script>

@@ -1,1 +1,0 @@
-getGeneDetails('S Gene','Surface Glycoprotein')

@@ -29,6 +29,17 @@
         {
           background-color: white;
         }
+        .comp-table-header {
+          background-color: #3c3b3b;
+          color: white;
+        }
+        .comp-table-header-td {
+          padding: 5px;
+          text-align: center;
+          font-size: 13px;
+          padding-right: 5px;
+          border-right: 1px solid #a7a7a7;
+        } 
 
         
     </style>
@@ -94,7 +105,7 @@
               var sars1js = parsedData[0].sars1seq;
               var sars2js = parsedData[0].sars2seq;
               var sarsevaljs = parsedData[0].sarsevalseq;
-              console.log(sarsevaljs);
+              // console.log(sarsevaljs);
               // sarsevaljsNewspaces = sarsevaljs.replace(" ","&nbsp;")
               var i=0;
               const cov2Array = Array();
@@ -146,7 +157,7 @@
               // var newEntry1 = document.createElement('p');
               
               while (par>indcount){
-                if (start1 && start2 && evalst){
+                if (start1 || start2 || evalst){
                   var interval = 79;
                 }else{
                   var interval = 80;
@@ -173,20 +184,17 @@
                     // console.log(cov1Array[cov1ArrayCount][0])
                   // console.log(cov1Array[cov1ArrayCount][1])
                   } catch (error){
-                    console.log(error)
+                    // console.log(error)
                   }
                   
 
                   if (indcount <= cov1Array[cov1ArrayCount][0] && cov1Array[cov1ArrayCount][0] <= indcount+interval ) {
                     // regular start to domain start    
                     if (continued1===false || isNaN(cov1Array[cov1ArrayCount-1][0])  ){
-                      console.log(cov1Array[cov1ArrayCount][0]);
 
                       if(start1=== true){
-                        console.log(cov1Array[cov1ArrayCount][0]);
                         if( cov1Array[cov1ArrayCount][0]==1){
                           // pass
-                          console.log("___________________passed")
                         }else{
                         finArray1.push(sars1js.slice(indcount-1, cov1Array[cov1ArrayCount][0])); 
                         start1 = false;
@@ -204,7 +212,6 @@
                     
                     if (indcount <= cov1Array[cov1ArrayCount][1] && cov1Array[cov1ArrayCount][1] <= indcount+interval){
                       // if end is in interval
-                      console.log(start1);
                       
                       finArray1.push(sars1js.slice(cov1Array[cov1ArrayCount][0], cov1Array[cov1ArrayCount][1]));// domain start to minimum of end of interval or doamin end
 
@@ -214,11 +221,7 @@
                       
                       try{ if ((indcount <= cov1Array[cov1ArrayCount+1][0] && cov1Array[cov1ArrayCount+1][0] <= indcount+interval) || (indcount <= cov1Array[cov1ArrayCount+1][1] && cov1Array[cov1ArrayCount+1][1] <= indcount+interval ) ){
                         // if next domain is in this interval  restart looop but don't restart array
-                        // console.log(cov1Array[cov1ArrayCount][0]);
-                        // console.log(cov1Array[cov1ArrayCount+1][0]);
-                        // console.log(indcount+interval);
                         
-                        // console.log("continued");
                         
                         continued1 = true ;
                         cov1ArrayCount ++;
@@ -232,19 +235,15 @@
                       } catch (error) {
                         finArray1.push(sars1js.slice(cov1Array[cov1ArrayCount][1], indcount+interval));
                         // cov1ArrayCount ++;
-                        // console.log(error)
                         continued1 = false
                       }   
                       cov1ArrayCount ++;
                       continued1 = false;
                     } else {
                         // end is not in interval but start is and no other domains are
-                        console.log([interval,cov1Array[cov1ArrayCount][0],indcount,finArray1]);
                         finArray1.push(sars1js.slice(cov1Array[cov1ArrayCount][0],  indcount+interval)); // go to end of interval 
                         finArray1.push(`</span>`);
-                        console.log("end is not in interval but start is not and no other domains are");
                         continued1 = false;
-                        console.log(sars1js.slice(cov1Array[cov1ArrayCount][0],  indcount+interval));
                         
                       } 
 
@@ -252,8 +251,6 @@
                       // else if only the end is in interval
                       finArray1.push(`<span style="background-color:${colorli[cov1ArrayCount]}">`);
                       if(start1 === true){
-                        console.log(cov1Array[cov1ArrayCount][0]);
-                        console.log("___________________passed")
                         finArray1.push(sars1js.slice(cov1Array[cov1ArrayCount][0], cov1Array[cov1ArrayCount][1]));
 
                       }else{
@@ -279,7 +276,6 @@
                       // finArray1.push(`<span style="background-color:${colorli[cov1ArrayCount]}">`);
                       // finArray1.push(sars1js.slice(indcount, cov1Array[cov1ArrayCount][1]));
                       finArray1.push(`</span>`);
-                      console.log("only end in interval");
                       // newEntry1.appendChild(x);
                       
                       
@@ -291,7 +287,6 @@
                         
                         continued1 = true ;
                         cov1ArrayCount ++;
-                        console.log("end in interval but also new domain in interval")
                         continue
                       }else{
                         finArray1.push(sars1js.slice(cov1Array[cov1ArrayCount][1], indcount+interval));
@@ -310,8 +305,6 @@
                         // start and end is not in interval, check if intervals are smaller than st end 
                         finArray1.push(`<span style="background-color:${colorli[cov1ArrayCount]}">`);
                         if(start1 === true){
-                        console.log(cov1Array[cov1ArrayCount][0]);
-                        console.log("___________________passed")
                         finArray1.push(sars1js.slice(cov1Array[cov1ArrayCount][0],indcount+interval));
                         start1 = false;
 
@@ -321,7 +314,6 @@
 
                         }
                         finArray1.push(`</span>`);
-                        console.log(" start and end is not in interval, but intevral is in domain")
                         
                         
                         continued1 = false;
@@ -330,17 +322,15 @@
                       // this is for cases with no alignment and start and end are both 0 0 
                       cov1ArrayCount ++;
                       continued1 = true;
-                      console.log("special continued no alignment case");
                       if (cov1Array[cov1ArrayCount]== undefined){
                         continued1=false
                         if(start1){
-                          finArray1.push(sars1js.slice(indcount-1,  indcount+interval));
+                          finArray1.push(sars1js.slice(indcount-1 ,  indcount+interval));
                           start1=false;
                         }else{
                           finArray1.push(sars1js.slice(indcount,  indcount+interval));
 
                         }
-                        console.log("actually just interval")
                       }else{
                         continue
                       }
@@ -348,7 +338,6 @@
                     }else{
                       
                       
-                      console.log(" 1 else statement, just interval")
                       if(start1){
                           finArray1.push(sars1js.slice(indcount-1,  indcount+interval));
                           start1=false;
@@ -398,8 +387,8 @@
                         start2= false;
                       } else{
                         finArray2.push(sars2js.slice(cov2Array[cov2ArrayCount-1][1], cov2Array[cov2ArrayCount][0])); 
-                        console.log(sars2js.slice(cov2Array[cov2ArrayCount-1][1], cov2Array[cov2ArrayCount][0]));
-                        console.log("above is if continued2= true regular start ot domain")
+                        // console.log(sars2js.slice(cov2Array[cov2ArrayCount-1][1], cov2Array[cov2ArrayCount][0]));
+                        // console.log("above is if continued2= true regular start ot domain")
                       }
                       
   
@@ -417,11 +406,11 @@
                           // console.log(cov2Array[cov2ArrayCount+1][0]);
                           // console.log(indcount+interval);
                           
-                          console.log("2 continued");
+                          // console.log("2 continued");
                           
                           continued2 = true ;
                           cov2ArrayCount ++;
-                          console.log("2 end in interval but also new domain in interval");
+                          // console.log("2 end in interval but also new domain in interval");
 
                           continue
                           // restartes while loop to add new domain in
@@ -429,7 +418,7 @@
                         }else{
                           finArray2.push(sars2js.slice(cov2Array[cov2ArrayCount][1], indcount+interval));
                           // cov2ArrayCount ++;
-                          console.log("2 end in interval but also NO new domain in interval");
+                          // console.log("2 end in interval but also NO new domain in interval");
                           // if (continued2 != true){
                           //   continued2=false
                           // } 
@@ -437,7 +426,7 @@
                         }
                         } catch (error) {
                           finArray2.push(sars2js.slice(cov2Array[cov2ArrayCount][1], indcount+interval));
-                          console.log(error);
+                          // console.log(error);
                           continued2 = false;
                         }   
                         cov2ArrayCount ++;
@@ -446,7 +435,7 @@
                           // end is not in interval but start is and no other domains are
                           finArray2.push(sars2js.slice(cov2Array[cov2ArrayCount][0],  indcount+interval)); // go to end of interval 
                           finArray2.push(`</span>`);
-                          console.log("2 end is not in interval but start is not and no other domains are");
+                          // console.log("2 end is not in interval but start is not and no other domains are");
                           continued2 = false;
                           
                         } 
@@ -457,8 +446,8 @@
 
                         finArray2.push(`<span style="background-color:${colorli[cov2ArrayCount]}">`);
                         if(start2 === true){
-                          console.log(cov2Array[cov2ArrayCount][0]);
-                          console.log("___________________passed");
+                          // console.log(cov2Array[cov2ArrayCount][0]);
+                          // console.log("___________________passed");
                           finArray2.push(sars2js.slice(cov2Array[cov2ArrayCount][0], cov2Array[cov2ArrayCount][1]));
 
                         }else{
@@ -472,7 +461,7 @@
                         
                         
                         finArray2.push(`</span>`);
-                        console.log("end is in interval");
+                        // console.log("end is in interval");
                         continued2 = false;
                         
                       
@@ -484,12 +473,12 @@
                         
                           continued2 = true ;
                           cov2ArrayCount ++;
-                          console.log(" 2 end in interval but also new domain in interval");
+                          // console.log(" 2 end in interval but also new domain in interval");
                           continue
                         }else{
                           finArray2.push(sars2js.slice(cov2Array[cov2ArrayCount][1], indcount+interval));
                           // cov2ArrayCount ++;
-                          console.log("2 only end in interval, NO new domain");
+                          // console.log("2 only end in interval, NO new domain");
                           continued2 = false ;
                         }
                         } catch (error) {
@@ -504,8 +493,8 @@
                           // start and end is not in interval, check if intervals are smaller than st end 
                           finArray2.push(`<span style="background-color:${colorli[cov2ArrayCount]}">`);
                           if(start2 === true){
-                            console.log(cov2Array[cov2ArrayCount][0]);
-                            console.log("___________________passed")
+                            // console.log(cov2Array[cov2ArrayCount][0]);
+                            // console.log("___________________passed")
                             finArray2.push(sars2js.slice(cov2Array[cov2ArrayCount][0], indcount+interval));
 
                           }else{
@@ -519,8 +508,8 @@
                           // finArray2.push(`<span style="background-color:${colorli[cov2ArrayCount]}">`);
                           // finArray2.push(sars2js.slice(indcount, indcount+interval)); // go to end of interval 
                           finArray2.push(`</span>`);
-                          console.log("2 start and end is not in interval, but intevral is in domain");
-                         
+                          // console.log("2 start and end is not in interval, but intevral is in domain");
+                        //  
                           
                           
                           continued2 = false;
@@ -545,7 +534,7 @@
                     textContent2 = document.createTextNode(`SARS-CoV-2 \xa0`);
                     newEntry2.appendChild(textContent1);
                     
-                    console.log("2 BIG else statement, just interval");
+                    // console.log("2 BIG else statement, just interval");
 
                     finArray2.push(sars2js.slice(indcount,  indcount+interval));
                     continued2 = false;
@@ -568,7 +557,7 @@
                 if (evalst){
                   var tmpEval = sarsevaljs.slice(indcount-1,indcount +interval);
                   evalst=false;
-                  console.log("evalst is true");
+                  // console.log("evalst is true");
                 }else{
                   var tmpEval = sarsevaljs.slice(indcount,indcount +interval);
                 }
@@ -718,7 +707,7 @@
               
               var s = document.createElement('script');
               s.type = 'text/javascript';
-              s.src = 'JS/domainplotter5.js';
+              s.src = './JS/domainplotter5.js';
               try {
                 document.body.appendChild(s);
               } catch (e) {
@@ -747,7 +736,7 @@
               parsedProteinData = proteinInfo.detailInfo;
               $proteinData = 'proteinData=' + JSON.stringify(proteinInfo.detailInfo);
               xmlHttpHtmlPost.send($proteinData)
-              console.log(parsedProteinData);
+              // console.log(parsedProteinData);
               // console.log(proteinInfo,"...");
             }
           }
@@ -798,7 +787,7 @@
                 <option value="Nsp8">Nsp8</option>
                 <option value="Nsp9">Nsp9</option>
                 <option value="Nsp10">Nsp10</option>
-                <option value="Nsp11">Nsp11</option>
+                <!-- <option value="Nsp11">Nsp11</option> -->
                 <option value="Nsp12">Nsp12</option>
                 <option value="Nsp13">Nsp13</option>
                 <option value="Nsp14">Nsp14</option>
@@ -808,13 +797,13 @@
                 <option value="ORF3a Protein">ORF3a</option>
                 <option value="Envelope Membrane Protein">E Gene</option>
                 <option value="Membrane Protein">M Gene</option>
-                <!-- <option value="ORF6a Protein">ORF6a</option> -->
+                <option value="ORF6 Protein">ORF6</option>
                 <option value="ORF7a Protein">ORF7a</option>
                 <!-- <option value="ORF7b Protein">ORF7b</option> -->
-                <!-- <option value="ORF8 Protein">ORF8</option> -->
-                <!-- <option value="ORF9b protein">ORF9</option> -->
+                <option value="ORF8 Protein">ORF8</option>
+                <option value="ORF9b protein">ORF9b</option>
                 <option value="Nucleocapsid proteins">N Gene</option>
-                <option value="ORF10 Protein">ORF10</option>
+                <!-- <option value="ORF10 Protein">ORF10</option> -->
               </select>
             </div>
 

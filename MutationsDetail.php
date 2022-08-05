@@ -7,9 +7,11 @@ error_reporting(E_ALL);
   <head>
     <link rel="stylesheet" href="bootstrap.css" />
     
+    
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="./sortable.js"></script>
     <style>
       .header {
           position: sticky;
@@ -89,7 +91,7 @@ error_reporting(E_ALL);
     require_once('connection.php');
     $sql = "SELECT
                 distinct m.reference, m.alternate,  
-                m.coordinate, g.protein, g.domain, SUM(m.mutcount) no_of_samples
+                m.coordinate, g.protein, g.domain, SUM(m.mutcount) no_of_samples, g.protSeq, g.RNA_sequence, g.Start
             FROM mutations m
                 INNER JOIN Gene_1 g ON m.coordinate BETWEEN g.start AND g.end
             WHERE 1=1 $q1
@@ -100,6 +102,7 @@ error_reporting(E_ALL);
     $result = $con->query($sql);
     // echo ($sql);
 
+    
     if (!$result) {
       echo ($sql);
       echo ("query error");
@@ -109,22 +112,20 @@ error_reporting(E_ALL);
     $total = $result->num_rows;
   ?>
   <body>
-    <script>
-      console.log("test")
-    </script>
+    
 
     <div class="datagrid">
-      <table class='table'>
+      <table class='sortable' >
         <thead>
           <tr class="dark">
-            <th class="header" width='12%'>Coordinate</th>
-            <th class="header" width='12%'>Reference Base</th>
-            <th class="header" width='12%'>Alternate Base</th>
+            <th  width='12%'>Coordinate</th>
+            <th width='12%'>Reference Base</th>
+            <th width='12%'>Alternate Base</th>
             <!--<th class="header" width='12%'>Instrument</th>-->
             
-            <th class="header" width='12%'>Protein</th>
-            <th class="header" width='30%'>Domain</th>
-            <th class="header" width='10%'>No. of samples</th>
+            <th class="no-sort" width='12%'>Protein</th>
+            <th class="no-sort" width='30%'>Amino Acid Change</th>
+            <th width='10%'>No. of samples</th>
           </tr>
         </thead>
         <tbody>
@@ -134,7 +135,111 @@ error_reporting(E_ALL);
               $color1 = 'background-color:White';
               $color2 = 'background-color:LightGray';
               $prev_color = $color1;
+              $aminoacids=array("F","L","I","M","V","S","P","T","A","Y","*","H","Q","N","K","D","E","C","W","R","G","X");
+
+              $triplets=array("(TTT |TTC )","(TTA |TTG |CT. )","(ATT |ATC |ATA )","(ATG )","(GT. )","(TC. |AGT |AGC )",
+              "(CC. )","(AC. )","(GC. )","(TAT |TAC )","(TAA |TAG |TGA )","(CAT |CAC )",
+              "(CAA |CAG )","(AAT |AAC )","(AAA |AAG )","(GAT |GAC )","(GAA |GAG )","(TGT |TGC )",
+              "(TGG )","(CG. |AGA |AGG )","(GG. )","(\S\S\S )");
+
+
               foreach($result_rows as $row) {
+
+                $mutGeneCoord = $row['coordinate']-$row['Start'];
+                $newseq = substr_replace($row['RNA_sequence'], $row['alternate'], $mutGeneCoord,1);
+                
+                
+                
+
+                $temp = chunk_split($newseq,3,' ');
+                $peptide = preg_replace ($triplets, $aminoacids, $temp);
+                $length = strlen($row['protSeq']);
+                
+                // $change="No change";
+
+                if ($peptide == $row['protSeq']){
+                  $change="Synonymous change";
+                }else{
+                  for ($index = 0; $index < $length; $index++) {
+                    // $newAA=substr($peptide,$index,$index+1);
+                    // $canonAA=substr($row['protSeq'],$index,$index+1);
+                    $newAA = $peptide[$index];                      
+                    $canonAA=$row['protSeq'][$index];
+                    
+                    if ($newAA==$canonAA){
+
+                    }else{
+                      if ($newAA== "*"){
+                        $change="Nonsense Variant";
+                        break;
+                      }else{
+                        $change="Missense Variant: p.";
+                        $change.=$canonAA;
+                        $change.=$index+1;
+                        // $change.="|||||||||||||||||";
+
+                        $change.=$newAA;
+                        $change.="  |  ";
+
+                        $orf1ansp = ['Nsp1',
+                        'Nsp2',
+                        'Nsp3',
+                        'Nsp4',
+                        'Nsp5',
+                        'Nsp6',
+                        'Nsp7',
+                        'Nsp8',
+                        'Nsp9',
+                        'Nsp10',
+                        'Nsp11',];
+                        $orf1bnsp = ['Nsp12',
+                        'Nsp13',
+                        'Nsp14',
+                        'Nsp15',
+                        'Nsp16'];
+
+
+                        $abbvProts = ["Surface Glycoprotein","Envelope Membrane Protein", "Membrane Protein","Nucleocapsid proteins"];
+
+                        if (in_array($row['protein'],$abbvProts)){
+                          $tmp_prot = substr($row['protein'], 0,1);
+                          $covariantlink=$tmp_prot;
+                          $ind1 = $index+1;
+                          $covariantlink.=".".$canonAA.$ind1;
+                        }else if (in_array($row['protein'],$orf1ansp)){
+                          $covariantlink="";
+                        }else if (in_array($row['protein'],$orf1bnsp)){
+                          $covariantlink="";
+                        }else{
+                          $tmp_prot = $row['protein'];
+                          $covariantlink=$tmp_prot;
+                          
+
+                          $ind1 = $index+1;
+                          $covariantlink.=".".$canonAA.$ind1;
+                                                }
+                          
+                        
+                        
+                        
+
+
+                        // $covariantlink = "";
+                        $change.='<a href="https://covariants.org/variants/'.$covariantlink.'">Try your luck on Covariant</a>';
+                        break;
+                      }
+                    }
+  
+                  }
+                }
+
+                // for ($index = 0; $index < $length; $index++) {
+                  // $triplet = substr($newseq,$index,$index+3);
+                  // $peptide = preg_replace ($triplets[$genetic_code], $aminoacids, $temp);
+
+                // }
+
+
                 $data = '';
                 if ($prev_color==$color1){
                   $data.= "<tr style=".$color2.">" ;
@@ -148,7 +253,7 @@ error_reporting(E_ALL);
                 $data.='<td>'.$row['alternate'].'</td>';
                 //$data.='<td>'.$row['instrument'].'</td>';
                 $data.='<td>'.$row['protein'].'</td>';
-                $data.='<td>'.$row['domain'].'</td>';
+                $data.='<td>'.$change.'</td>';
                 $data.='<td>'.$row['no_of_samples'].'</td>';
                 $data.='</tr>';
                 echo $data;

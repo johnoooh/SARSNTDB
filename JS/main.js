@@ -74,32 +74,32 @@ var geneed = [
   29533,
   29674]
 
-var GENESDISPLAY= ["NSP1",
-  "nsp2",
-  "NSP3",
-  "NSP4",
-  "NSP5",
-  "NSP6",
-  "NSP7",
-  "NSP8",
-  "NSP9",
-  "NSP10",
-  "NSP11",
-  "NSP12",
-  "NSP13",
-  "NSP14",
-  "NSP15",
-  "NSP16",
-  "S gene",
-  "ORF3a",
-  "E Gene",
-  "M Gene",
-  "ORF6",
-  "ORF7a",
-  "ORF7b",
-  "ORF8",
-  "N Gene",
-  "ORF10"
+var GENESDISPLAY= ["1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "S",
+  "3a",
+  "E",
+  "M",
+  "6",
+  "7a",
+  "7b",
+  "8",
+  "N",
+  "10"
   ]
 
   var GENESLINK= ["ORF1ab",
@@ -158,7 +158,7 @@ var GENESDISPLAY= ["NSP1",
   "ORF10 Protein"
   ]
   // ["233d4d","915e3d","fe7f2d","fcca46","cfc664","a1c181","81ae86","71a588","69a089","619b8a"]
-var genecolor =["DAF7A6","FFC300","FF5733","C70039","900C3F" , "85929e","5d6d7e","34495e","283747","212f3c","1b2631","233d4d","3F4649","5a4e45","915e3d","fe7f2d","fda53a","fcca46","cfc664","a1c181","71a588","619b8a","0e6251","21618c","9b59b6","7d3c98"]
+var genecolor =["DAF7A6","FFC300","FF5733","C70039","900C3F" , "85929e","2596be","9925be","be4d25","49be25","d966ff","668cff","ff66b3","5a4e45","915e3d","fe7f2d","fda53a","fcca46","cfc664","a1c181","71a588","619b8a","0e6251","21618c","9b59b6","7d3c98"]
 
 
 for (let i = 0; i < genests.length; i++) {
@@ -176,6 +176,34 @@ function createLegend(){
   var LegendTable = document.createElement('table');
 
   
+  trtop = document.createElement('tr');
+  emptytd =document.createElement('td');
+
+  trtop.classList.add("comp-table-header");
+  tdnsp = document.createElement('td');
+  tdSP = document.createElement('td');
+  
+  tdnsp.classList.add("comp-table-row-td");
+  tdSP.classList.add("comp-table-row-td");
+  emptytd.classList.add("comp-table-row-td");
+  trtop.appendChild(emptytd);
+
+  tdnsp.appendChild(document.createTextNode("Non-Structural Proteins"));
+  tdSP.appendChild(document.createTextNode("Structural Proteins"));
+  trtop.appendChild(tdnsp);
+
+  trtop.appendChild(tdSP);
+  tdnsp.colSpan = "16";
+  tdnsp.style.width = "70%";
+  tdnsp.align = "center";
+  tdSP.colSpan = '10';
+  tdSP.style.width = '30%';
+  tdSP.align = "center";
+
+
+  LegendTable.appendChild(trtop);
+
+
   tr = document.createElement('tr');
   td = document.createElement('td');
   tdsuperhead = document.createElement('td');
@@ -183,7 +211,7 @@ function createLegend(){
   td.classList.add("comp-table-row-td");
   td.appendChild(document.createTextNode("Gene"));
   tdsuperhead.appendChild(document.createTextNode("Color"));
-
+ 
   tr.appendChild(td);
   
   
@@ -264,7 +292,17 @@ function plotrepeats(array)
     highlight.style.marginLeft = map(array[i]) + "px";
   }
 
-function plotIntraGenome(array)
+  function resetFormGenome(){
+    // console.log("clicked");
+    container.innerHTML = '';
+    var highlights = document.getElementsByClassName("highlight");
+    var parentNode = document.getElementById("repeatDisplay");
+    while(highlights.length>0){
+      parentNode.removeChild(highlights[0])
+      // highlights[0]
+    }}
+    
+  function plotIntraGenome(array)
 {
   function resetFormGenome(){
     // console.log("clicked");
