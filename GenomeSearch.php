@@ -707,7 +707,7 @@
               
               var s = document.createElement('script');
               s.type = 'text/javascript';
-              s.src = './JS/domainplotter5.js';
+              s.src = './JS/domainPlotter5.js';
               try {
                 document.body.appendChild(s);
               } catch (e) {

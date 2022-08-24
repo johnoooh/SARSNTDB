@@ -143,7 +143,7 @@ error_reporting(E_ALL);
               //$functiondata.='<div class="row"><table>';
               $domst = $row["Feature_Start"];
               $domed = $row["Feature_End"];
-              $domProtst = ($row["Start"]+$row["Feature_Start"])/3;
+              $domProtst = (intval($row["Start"])+intval($row["Feature_Start"]))/3;
               $domProted = ($row["End"]+$row["Feature_End"])/3;
               array_push($featureArray, array("feature" => $row["domainNameCov2"], "st" => $domst, "end" => $domed, "color" => $colorPaletteId,"AArange" => $row["cov2AAStartEnd"]));
               // $functiondata.='   <tr><td class="col-md-12"><b>'.$row['Feature'].'</b></td></tr>';

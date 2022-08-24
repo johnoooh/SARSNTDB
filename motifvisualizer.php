@@ -216,7 +216,6 @@
       const nonNTalphabet = ["B","D","E","F","H","I","J","K","L","M","N","O","P","Q","R","S","U","V","W","X","Y","Z",""];
 
     function resetForm(){
-      // console.log("clicked");
       container.innerHTML = '';
       var highlights = document.getElementsByClassName("highlight");
       var parentNode = document.getElementById("repeatDisplay");
@@ -230,28 +229,15 @@
       function makeTable(coordarray,substrarray) {
       var repeat = document.getElementById("motif").value;
 
-      // console.log(coordarray);
-      // console.log(substrarray);
       var theTable = document.createElement('table');
-      // theTable.classList.add("table table-bordered");
-      // console.log(typeof(array[1]));
       var coordarray = coordarray.map(function (x) { 
         return parseInt(x, 10); 
         });
 
-      // console.log(typeof(array[1]));
-
-      // coordarray.sort(function(a, b){return a-b});
-      // console.log(coordarray);
-      // console.log(substrarray);
-
       const zip = (a, b) => Array(Math.max(b.length, a.length)).fill().map((_,i) => [a[i], b[i]]);
       
       var zippedArray = zip(coordarray,substrarray);
-      // coordarray.sort(function(a, b){return a-b});
-      // console.log(zippedArray[0][0]);
       zippedArray.sort(function(x,y){return x[0] - y[0];});
-      // console.log(zippedArray);
       
 
       var arrayLength = zippedArray.length;
@@ -319,7 +305,7 @@
       var parsedData = JSON.parse(data);
       // console.log("in makehtmltable");
       // console.log(parsedData[0]);
-      console.log(parsedData[0].proteins);
+      // console.log(parsedData[0].proteins);
       // console.log(parsedData[0].substrings.length);
       plotrepeats(parsedData[0].coordinates);
 
@@ -349,8 +335,15 @@
         tdsuper.classList.add("comp-table-row-td");
 
         var superText = document.createElement("a");
+        var superLink = document.createTextNode(parsedData[0].substrings[i]);
+        superText.appendChild(superLink);
+        superText.href = 'motifvisualizer.php?repeat='+parsedData[0].substrings[i];
         superText.innerText = parsedData[0].substrings[i];
-        superText.addEventListener("click",superStringSet);
+
+
+        // console.log("here!!!!!!!!!!!!!!!!!!!");
+        // console.log(parsedData[0].substrings[i]);
+        // superText.addEventListener("click",superStringSet);
         tdsuper.appendChild(superText);
 
         theTable.appendChild(tdsuper);
@@ -362,13 +355,19 @@
     function superStringSet(){
       // console.log(this.innerText);
       document.getElementById("motif").value = this.innerText;
+
       getRepeatData();
     }
 
     
     function getRepeatData() {
       
-
+      if (previousRepeats){
+        previousRepeats.push(document.getElementById("motif").value)
+      }else{
+        var previousRepeats=[document.getElementById("motif").value]
+      }
+      
       resetForm()
       
       // container.innerHTML = '';
@@ -386,12 +385,7 @@
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {   
-          // console.log(this.responseText);
-          // console.log(this);
 
-          // var parsedData = JSON.parse(this.responseText);
-          // console.log(this.responseText);
-          // console.log(typeof(this.responseText));
           makeHTMLtable(this.responseText);
           
 
@@ -404,10 +398,9 @@
 
     window.onload = function() {
       if (<?php echo $repeatExternal; ?>  == 1){
-        console.log("test");
         getRepeatData();
+
       }else{
-        console.log("test");
         getRepeatData();
       } 
 
