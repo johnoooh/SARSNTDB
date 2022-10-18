@@ -9,7 +9,6 @@
     <?php include "./Navigation.php";?>
     <?php include "./ProtienInfo.php";?>
     
-    <!-- <script src="./JS/colorArraysc.js"></script> -->
     
     <style>
         .btn 
@@ -43,9 +42,7 @@
 
         
     </style>
-    <!--<script type="text/javascript" src="JS\domainPlotter.js"></script> -->
     <?php 
-    // $endData = array();
     if(isset($_GET['start'])){
       //print_r($_POST['proteinData']);
       $startData = $_GET['start'];
@@ -62,7 +59,6 @@
       $endData = "";
 
     }
-
   ?>
     <script>
       
@@ -72,9 +68,9 @@
       var parsedProteinData;
       var proteinSeqImgDiv;
       
+    
+
       function getCovCov2ComparisonData() {
-        // console.log(inputProtein);
-        // var protein = document.getElementById("Protein").value;
         var protein = document.getElementById("proteininner").innerText
         console.log(protein);
         var xmlhttp = new XMLHttpRequest();
@@ -619,6 +615,7 @@
           document.getElementById("End").value="";
       }  
       function getGenomeData(getData) {
+        // performed when Submit is hit
 
         
         var protein = document.getElementById("Protein").value;
@@ -631,6 +628,32 @@
         searchgrid.style.display="block";
         var datagrid = document.getElementById("datagrid");
         
+        function containsAny(str) {
+          if (str.length==0){
+            return false;
+          }
+          for (var i = 0; i < str.length; i++) {
+            var substring = str[i];
+
+          
+            if (['1', '2', '3','4','5','6','7','8','9','0'].includes(substring)) {
+              console.log(substring);
+              continue;
+            }else{
+              return false;
+            }
+            } 
+            return true; 
+            }
+          console.log(start);
+          console.log(typeof(start));
+          console.log(end);
+          console.log(typeof(end));
+          if (containsAny(start)==false || containsAny(end)==false){
+          alert("Please input a valid start or end using integers only.")
+      
+
+        }else{
         if(getData === true) {
           var xmlhttp = new XMLHttpRequest();
           xmlhttp.onreadystatechange = function() {
@@ -648,7 +671,7 @@
 
           
         
-        }
+        }}
         
       }
       function mutSearch() {
@@ -743,6 +766,22 @@
           xmlHttpGetData.open("GET", "GenomeDetailData.php?Gene="+gene+"&Protein="+protein, true);
           xmlHttpGetData.send();
         }
+      }
+
+      function copyFunction(prot,seq) {
+        // Get the text field
+        var copyText = ">"+prot+"\n"+seq;
+
+        // Select the text field
+        // copyText.select();
+        // copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText);
+
+        // Alert the copied text
+        alert("Copied "+prot+" to clipboard, redirecting to SNAP2 webpage");
+        document.location.href = "https://rostlab.org/services/snap2web/";
       }
     </script>
 </head>

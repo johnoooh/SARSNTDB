@@ -193,7 +193,8 @@ error_reporting(E_ALL);
 
               $postdata.='  <div class="row"><table class="table borderless">';
               $postdata.='    <tr><td class="col-md-12"><b><a href= "https://www.ncbi.nlm.nih.gov/protein/'.$row['Accession'].'">Protein Sequence</a></b></td></tr>';
-              
+              $postdata.= '<button onclick="copyFunction(\''.$row['Current_Protein'].'\',\''.$row['protSeq'].'\')">Analyze Sequence using SNAP2</button> </td>';
+
               // if(count($seqHeaderAndValue) > 0)
               //   $postdata.='    <tr><td class="col-md-12">'.$seqHeaderAndValue[0].'</td></tr>';
 

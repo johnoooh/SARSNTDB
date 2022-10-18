@@ -252,8 +252,7 @@
 
       <div id="mutSummary" >
         <div id="mutationsSummary" class="datacontainer">
-          <div id="datagrid" class="datagrid">        
-          </div>
+          <div id="datagrid" class="datagrid"></div>
           <div id="mutationsChart" class="datagraph"></div>    
         </div>
         
@@ -469,6 +468,8 @@
           data: mutationsShapeScoreData
         }); 
         // console.log(mutationsShapeScoreData);
+
+
         // WT chart
         var mutationsShapeScoreChartWT = new CanvasJS.Chart("mutationsShapeScoreChartWT", {
           title: {
@@ -567,6 +568,7 @@
           },
           data: mutationsShapeScoreDataDELTA
         }); 
+
         // GSE153984
         var mutationsShapeScoreChartGSE153984 = new CanvasJS.Chart("mutationsShapeScoreChartGSE153984", {
           title: {
@@ -638,7 +640,7 @@
           localStorage.clear();
           
           document.getElementById("emptyText").style.display = "none";
-          // document.getElementById("mutationsData").style.display = "block";    
+          document.getElementById("mutationsData").style.display = "block";    
 
           var region = document.getElementById("Region").value;
           var start = document.getElementById("Start").value;
@@ -737,7 +739,6 @@
                 }
                 for (i = 0; i < res.mutationsByFrequency.length; i++) { 
                   mutationsByFreqData.splice(0,mutationsByFreqData.length);
-                  // console.log( res.mutationsByFrequency[i].Total);
                   mutationsByFreqData.push({
                       type: "column",
                       dataPoints: res.mutationsByFrequency[i].Total,
@@ -750,17 +751,10 @@
                 for (i = 0; i < res.mutationsShapeScoreIncarnato.length; i++) { 
                   mutationsShapeScoreData.splice(0,mutationsShapeScoreData.length);
 
-                  // if (res.mutationsShapeScore[i].Total> 0.5){
-                  //   var colorData = "blue";
-                  // }else{
-                  //   var colorData = "red"
-                  // }
-                  // console.log( res.mutationsShapeScoreIncarnato[i].Total);
                   mutationsShapeScoreData.push({
                       type: "column",
                       dataPoints: res.mutationsShapeScoreIncarnato[i].Total,
-                      // color: colorData
-                      // showInLegend: true,
+                     
                       legendText:"Colors"
                   });
                   mutationsShapeScoreChart.render();
@@ -769,17 +763,10 @@
               for (i = 0; i < res.mutationsShapeScoreWT.length; i++) { 
                   mutationsShapeScoreDataWT.splice(0,mutationsShapeScoreDataWT.length);
 
-                  // if (res.mutationsShapeScore[i].Total> 0.5){
-                  //   var colorData = "blue";
-                  // }else{
-                  //   var colorData = "red"
-                  // }
-                  // console.log( res.mutationsShapeScoreWT[i].Total);
+           
                   mutationsShapeScoreDataWT.push({
                       type: "column",
                       dataPoints: res.mutationsShapeScoreWT[i].Total,
-                      // color: colorData
-                      // showInLegend: true,
                       legendText:"Colors"
                   });
                   mutationsShapeScoreChartWT.render();
@@ -797,9 +784,7 @@
                   mutationsShapeScoreDataDELTA.push({
                       type: "column",
                       dataPoints: res.mutationsShapeScoreDELTA[i].Total,
-                      // showInLegend: true,
                       legendText:"Colors"
-                      // color: colorData
                   });
                   mutationsShapeScoreChartDELTA.render();
               }
@@ -811,9 +796,7 @@
                   mutationsShapeScoreDataGSE153984.push({
                       type: "column",
                       dataPoints: res.mutationsShapeScoreGSE153984[i].Total,
-                      // showInLegend: true,
-                      // legendText:"Colors"
-                      // color: colorData
+                    
                   });
                   mutationsShapeScoreChartGSE153984.render();
               }
@@ -858,50 +841,65 @@
       }
 
       function activateMutationsResultTab(tabId, mutationTabId) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("datacontainer");
-        tabcontentcite = document.getElementsByClassName("cite");
-        mutDetail = document.getElementById("mutationsDetail");
-        // for (i = 0; i < tabcontent.length; i++) {
-        //   tabcontent[i].style.display = "none";
-        //   try{
-        //     tabcontentcite[i].style.display = "none";
-        //   }catch (error){
-
-        //   }
-
-        // }
-        document.getElementById("mutSummary").style.display= "none"
-
-         
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(mutationTabId).style.display = "flex";
-        document.getElementById(tabId).className += " active";
-        // document.querySelectorAll("br").style.display="none";
-
-        if(tabId == 'summaryTab') {
-          document.getElementById("mutSummary").style.display= "inline"
-          mutDetail.style.display= "none"
-          // document.getElementById('mutationsSummaryFrequency').style.display = "flex";
-          // document.getElementById('mutationsShapeScoreIncarnato').style.display = "flex";
-          // document.getElementById('citeIncarnato').style.display = "flex";
-          // document.getElementById('mutationsShapeScoreDELTA').style.display = 'flex';
-          // document.getElementById('mutationsShapeScoreWT').style.display = "flex";
-          // document.getElementById('citeYang').style.display = "flex";
-          
-          // document.getElementById('mutationsShapeScoreGSE153984').style.display = "flex";
-          // document.getElementById('citeGSE153984').style.display = "flex";
-
-          
+        var region = document.getElementById("Region").value;
+        var start = document.getElementById("Start").value;
+        var end = document.getElementById("End").value;
+        if ((end-start)>25000 && region=="All"){
+          alert("Mutation Detail page not available for full length analysis, please select a protein or input an interval")
+          pass
         }else{
-          mutDetail.style.display= "inline"
-        }
-      }
 
+          var i, tabcontent, tablinks;
+          tabcontent = document.getElementsByClassName("datacontainer");
+          tabcontentcite = document.getElementsByClassName("cite");
+          mutDetail = document.getElementById("mutationsDetail");
+          // for (i = 0; i < tabcontent.length; i++) {
+          //   tabcontent[i].style.display = "none";
+          //   try{
+          //     tabcontentcite[i].style.display = "none";
+          //   }catch (error){
+
+          //   }
+
+          // }
+          document.getElementById("mutSummary").style.display= "none"
+
+          
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+          document.getElementById(mutationTabId).style.display = "flex";
+          document.getElementById(tabId).className += " active";
+          // document.querySelectorAll("br").style.display="none";
+
+          if(tabId == 'summaryTab') {
+            document.getElementById("mutSummary").style.display= "inline"
+            mutDetail.style.display= "none"
+          
+          }else{  
+            mutDetail.style.display= "inline"
+          }
+        }
+    }
    
+    
+      function copyFunction(prot,seq) {
+        // Get the text field
+        var copyText = ">"+prot+"\n"+seq;
+
+        // Select the text field
+        // copyText.select();
+        // copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText);
+
+        // Alert the copied text
+        alert("Copied "+prot+" to clipboard, redirecting to SNAP2 webpage");
+        document.location.href = "https://rostlab.org/services/snap2web/";
+      }
+    
     </script>
 </body>
 </html>

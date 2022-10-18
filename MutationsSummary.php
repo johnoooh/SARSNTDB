@@ -159,6 +159,7 @@ error_reporting(E_ALL);
               left outer join Gene_1 g on m.coordinate between g.Start and g.End
              where 1=1 $q1
               group by g.Protein, g.Start, g.End, m.coordinate";
+
     $result2 = $con->query($sql2);
     // echo ($sql2);
 
@@ -285,6 +286,7 @@ error_reporting(E_ALL);
     $sql3 = "SELECT $pq FROM shapedata irs 
                 inner join Gene_1 g on irs.Coordinate between g.Start and g.End
               where 1=1 $q4 and irs.shapeval is not null";
+              
     // //console.log($sql3) and irs.icshape_score is not null;
     // echo ($sql3);
     $result3 = $con->query($sql3);
@@ -299,6 +301,7 @@ error_reporting(E_ALL);
     $sql3wt = "SELECT $pqwt FROM shapedata irs 
                 inner join Gene_1 g on irs.Coordinate between g.Start and g.End
               where 1=1 $q4 and irs.shapeval is not null";
+
     // //console.log($sql3) and irs.icshape_score is not null;
     // echo ($sql3);
     $result3wt = $con->query($sql3wt);
@@ -315,8 +318,8 @@ error_reporting(E_ALL);
     $sql3Delta = "SELECT $pqDelta FROM shapedata irs 
                 inner join Gene_1 g on irs.Coordinate between g.Start and g.End
               where 1=1 $q4 and irs.shapeval is not null";
-    // //console.log($sql3) and irs.icshape_score is not null;
-    // echo ($sql3Delta);
+
+
     $result3Delta = $con->query($sql3Delta);
     if (!$result3Delta) {
 
@@ -331,6 +334,7 @@ error_reporting(E_ALL);
     $sql3GSE153984 = "SELECT $pqGSE153984 FROM shapedata irs 
                 inner join Gene_1 g on irs.Coordinate between g.Start and g.End
               where 1=1 $q4 and irs.shapeval is not null";
+
     // //console.log($sql3) and irs.icshape_score is not null;
     // echo ($sql3GSE153984);
     $result3GSE153984 = $con->query($sql3GSE153984);

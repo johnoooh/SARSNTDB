@@ -124,6 +124,7 @@ error_reporting(E_ALL);
     }
 
     require_once './connection.php';
+    #Gets Genes
     $sql = "SELECT Gene, Protein, Accession, Start, End, Function, matchedcols FROM Gene_1 WHERE 1=1 $q1 ORDER BY Gene_1.Start = 0, Gene_1.Start, Gene_1.Protein";
     $result = $con->query($sql);
     if (!$result) {
@@ -133,6 +134,7 @@ error_reporting(E_ALL);
     $result_rows = $result->fetch_all(MYSQLI_ASSOC);
     $total = $result->num_rows;
 
+    #Gets Domains
     $sqldom = "SELECT gene, feature, domainNameCov2, cov2Start, cov2End, cov2AAStartEnd FROM cov_comp WHERE 1=1 $q2 ORDER BY cov_comp.cov2Start + 0";
     $resultDom = $con->query($sqldom);
     if (!$resultDom) {
@@ -215,7 +217,7 @@ error_reporting(E_ALL);
                 // }
                 $data.= "<tr style=".$color2.">" ;
 
-                if ($row['Gene']=="ORF10" || $row['Gene']== "ORF7b" || $row['Protein']=="Nsp11" ||$row['Protein']== "Nsp16"){
+                if ($row['Gene']=="ORF10" || $row['Gene']== "ORF7b" || $row['Protein']=="Nsp11"){
                   $data ='<td>Details not available currently</td>';
                 }else{
                   $data ='<td><a onclick="getGeneDetails(\''.$row['Gene'].'\',\''.$row['Protein'].'\')">View Detail</a></td>';

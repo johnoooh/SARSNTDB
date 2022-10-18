@@ -12,5 +12,6 @@
 </head>
 <body>
 
-    <h5> If you use this database in your work please cite it as ...</h5>
+    <h5> To learn more about the database please read my thesis below</h5>
+    <iframe src="./helpimages/SARSNTDB-JO-thesis.pdf" width="100%" height="800px">
 </body>

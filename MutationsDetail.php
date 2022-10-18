@@ -88,6 +88,10 @@ error_reporting(E_ALL);
     $q1 .= " AND m.instrument = '" . $instrument . "'";
     }
 
+
+
+
+    
     require_once('connection.php');
     $sql = "SELECT
                 distinct m.reference, m.alternate,  
@@ -110,10 +114,27 @@ error_reporting(E_ALL);
     }
     $result_rows = $result->fetch_all(MYSQLI_ASSOC);
     $total = $result->num_rows;
+  
   ?>
   <body>
     
+    <script>
 
+      function copyFunction(prot,seq) {
+        // Get the text field
+        var copyText = ">"+prot+"\n"+seq;
+
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
+
+        // Alert the copied text
+        alert("Copied the text: " + copyText.value);
+      }
+    </script>
     <div class="datagrid">
       <table class='sortable' >
         <thead>
@@ -125,10 +146,15 @@ error_reporting(E_ALL);
             
             <th class="no-sort" width='12%'>Protein</th>
             <th class="no-sort" width='30%'>Amino Acid Change</th>
-            <th width='10%'>No. of samples</th>
+            <th width='10%'>No. of Samples</th>
+            <th width='10%'>%    Containing Mutation</th>
+            <th width='10%'>SNAP2 Analysis</th>
+            
           </tr>
         </thead>
+        
         <tbody>
+        
           <?php
               $columns = array_column($result_rows, 'coordinate');
               array_multisort($columns, SORT_ASC, $result_rows);
@@ -142,14 +168,11 @@ error_reporting(E_ALL);
               "(CAA |CAG )","(AAT |AAC )","(AAA |AAG )","(GAT |GAC )","(GAA |GAG )","(TGT |TGC )",
               "(TGG )","(CG. |AGA |AGG )","(GG. )","(\S\S\S )");
 
-
+              $copyFasta = "";
               foreach($result_rows as $row) {
 
                 $mutGeneCoord = $row['coordinate']-$row['Start'];
                 $newseq = substr_replace($row['RNA_sequence'], $row['alternate'], $mutGeneCoord,1);
-                
-                
-                
 
                 $temp = chunk_split($newseq,3,' ');
                 $peptide = preg_replace ($triplets, $aminoacids, $temp);
@@ -160,9 +183,9 @@ error_reporting(E_ALL);
                 if ($peptide == $row['protSeq']){
                   $change="Synonymous change";
                 }else{
+                  #checks for what kind of variant it is 
                   for ($index = 0; $index < $length; $index++) {
-                    // $newAA=substr($peptide,$index,$index+1);
-                    // $canonAA=substr($row['protSeq'],$index,$index+1);
+           
                     $newAA = $peptide[$index];                      
                     $canonAA=$row['protSeq'][$index];
                     
@@ -179,7 +202,7 @@ error_reporting(E_ALL);
                         // $change.="|||||||||||||||||";
 
                         $change.=$newAA;
-                        $change.="  |  ";
+                        // $change.="  |  ";
 
                         $orf1ansp = ['Nsp1',
                         'Nsp2',
@@ -201,6 +224,7 @@ error_reporting(E_ALL);
 
                         $abbvProts = ["Surface Glycoprotein","Envelope Membrane Protein", "Membrane Protein","Nucleocapsid proteins"];
 
+                        #below is not really used, I disabled the covarniant link as it doesnt work for 99% of mutations
                         if (in_array($row['protein'],$abbvProts)){
                           $tmp_prot = substr($row['protein'], 0,1);
                           $covariantlink=$tmp_prot;
@@ -216,16 +240,10 @@ error_reporting(E_ALL);
                           
 
                           $ind1 = $index+1;
-                          $covariantlink.=".".$canonAA.$ind1;
                                                 }
                           
-                        
-                        
-                        
-
-
                         // $covariantlink = "";
-                        $change.='<a href="https://covariants.org/variants/'.$covariantlink.'">Try your luck on Covariant</a>';
+                        // $change.='<a href="https://covariants.org/variants/'.$covariantlink.'">Try your luck on Covariant</a>';
                         break;
                       }
                     }
@@ -238,8 +256,8 @@ error_reporting(E_ALL);
                   // $peptide = preg_replace ($triplets[$genetic_code], $aminoacids, $temp);
 
                 // }
-
-
+                $total_samples= 18900;
+                $percentage= round(($row["no_of_samples"]/18900)*100,2);
                 $data = '';
                 if ($prev_color==$color1){
                   $data.= "<tr style=".$color2.">" ;
@@ -255,12 +273,32 @@ error_reporting(E_ALL);
                 $data.='<td>'.$row['protein'].'</td>';
                 $data.='<td>'.$change.'</td>';
                 $data.='<td>'.$row['no_of_samples'].'</td>';
+                $data.='<td>'.$percentage.'</td>';
+                $data.= '<td><button onclick="copyFunction(\''.$row['protein'].'\',\''.$row['protSeq'].'\')">SNAP2</button> </td>';
+              
                 $data.='</tr>';
-                echo $data;
+                echo $data; 
               }
           ?>
         </tbody>
       </table>
     </div>
   </body>
+  <script>
+
+      function copyFunction(prot,seq) {
+        // Get the text field
+        var copyText = ">"+prot+"\n"+seq;
+
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
+
+        // Alert the copied text
+        alert("Copied the text: " + copyText.value);
+      }
+    </script>
 </html>
